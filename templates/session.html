@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Flask Chat App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .chat-header {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .message-container {
+            width: 90%;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px 15px; /* Increased padding */
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            word-wrap: break-word;
+            border: 1px solid #ccc;
+        }
+
+        .message b {
+            margin-right: 5px;
+        }
+
+        .input-box {
+            width: 90%;
+            padding: 10px;
+            background-color: #f5f5f5;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-box input,
+        .input-box textarea {
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .input-box input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            width: auto;
+            align-self: flex-end;
+        }
+
+        .input-box input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #error_message {
+            color: red;
+        }
+
+        .username {
+            padding: 6px; /* Reduced padding */
+            margin-bottom: 10px; /* Increased margin-bottom */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 18px);
+            outline: none;
+        }
+
+        .username:focus {
+            border-color: #007bff;
+        }
+
+        .username.neo {
+            /* Neo-like glowing effect */
+            box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.5);
+            animation: glowing 1500ms infinite alternate;
+        }
+
+        @keyframes glowing {
+            0% {
+                background-color: #ff0000;
+            }
+            50% {
+                background-color: #00ff00;
+            }
+            100% {
+                background-color: #0000ff;
+            }
+        }
+
+        .fixed-button {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 999;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .fixed-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="chat-header">Chat</h1>
+        <div class="message-container">
+            <!-- Message container -->
+            <div class="no-messages">No messages</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="input-box">
+            <form action="#" method="POST" id="message_form">
+                <input type="text" class="username" placeholder="User Name" />
+                <textarea class="message" placeholder="Message"></textarea>
+                <input type="submit" value="Send" />
+            </form>
+        </div>
+
+        <div id="error_message"></div>
+
+        <div class="fixed-button" id="scrollToBottomButton">
+            To newest message
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':5000');
+
+        var usernameColors = {};
+
+        $(document).ready(function () {
+            $('form#message_form').submit(function (event) {
+                event.preventDefault();
+                let user_name = $('input.username').val();
+                let user_input = $('textarea.message').val();
+
+                if (user_input.length < 1) {
+                    $('#error_message').text('No message found.');
+                    setTimeout(function () {
+                        $('#error_message').text('');
+                    }, 4000);
+                    return;
+                }
+
+                if (user_name.length > 12) {
+                    $('#error_message').text('Username must be shorter than 12 characters.');
+                    setTimeout(function () {
+                        $('#error_message').text('');
+                    }, 4000);
+                    return;
+                }
+
+                socket.emit('my event', { user_name: user_name, message: user_input });
+                $('textarea.message').val('').focus();
+            });
+
+            socket.on('my response', function (msg) {
+                if (typeof msg.user_name !== 'undefined') {
+                    var username = msg.user_name;
+                    var message = msg.message;
+
+                    if (!usernameColors[username]) {
+                        usernameColors[username] = getRandomLightColor();
+                    }
+
+                    var usernameElement = $('<b>').addClass('username').addClass('neo').text(username);
+                    usernameElement.css('background-color', usernameColors[username]);
+
+                    var messageContainer = $('<div>').addClass('message').append(usernameElement);
+                    var words = message.split(' ');
+
+                    // Check if message fits in one line
+                    var line = '';
+                    var lineHeight = usernameElement.height();
+                    var containerWidth = $('.message-container').width();
+                    for (var i = 0; i < words.length; i++) {
+                        var testLine = line + words[i] + ' ';
+                        var testWidth = $('<span>').addClass('message-text').text(testLine).width();
+                        if (testWidth > containerWidth) {
+                            var messageElement = $('<span>').addClass('message-text').text(line);
+                            messageContainer.append(messageElement);
+                            line = words[i] + ' ';
+                            lineHeight += messageElement.height();
+                        } else {
+                            line = testLine;
+                        }
+                    }
+
+                    var messageElement = $('<span>').addClass('message-text').text(line);
+                    messageContainer.append(messageElement);
+                    $('.message-container').append(messageContainer);
+
+                    $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
+                    $('.no-messages').hide();
+                }
+            });
+
+            socket.on('short message', function (data) {
+                $('#error_message').text(data.error);
+                setTimeout(function () {
+                    $('#error_message').text('');
+                }, 4000);
+            });
+
+            socket.on('validation error', function (data) {
+                $('#error_message').text(data.error);
+                setTimeout(function () {
+                    $('#error_message').text('');
+                }, 4000);
+            });
+
+            function getRandomLightColor() {
+                var letters = '89ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * letters.length)];
+                }
+                return color;
+            }
+
+            function scrollToBottom() {
+                $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
+            }
+
+            scrollToBottom();
+
+            $('#scrollToBottomButton').click(function () {
+                scrollToBottom();
+            });
+        });
+    </script>
+</body>
+</html>

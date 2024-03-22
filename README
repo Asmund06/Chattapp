@@ -1,0 +1,36 @@
+Chat App with Flask and SocketIO
+Dette prosjektet er en enkel chatapplikasjon laget ved hjelp av Flask og SocketIO. Applikasjonen tillater brukere å sende meldinger til hverandre i sanntid via et nettleservindu.
+
+Installasjon og oppsett
+Klon prosjektet: Last ned eller klon prosjektet til datamaskinen din ved å bruke git clone-kommandoen.
+
+bash
+Copy code
+git clone https://github.com/ditt-brukernavn/chat-app.git
+Installer avhengigheter: Gå inn i prosjektmappen og installer avhengighetene ved å kjøre:
+
+bash
+Copy code
+cd chat-app
+pip install -r requirements.txt
+Start serveren: Start serveren ved å kjøre hovedfilen main.py.
+
+bash
+Copy code
+python main.py
+Åpne applikasjonen: Åpne nettleseren og gå til http://localhost:5000 for å bruke chatapplikasjonen.
+
+Funksjonaliteter
+Sanntidschat: Brukere kan sende meldinger til hverandre i sanntid uten å måtte oppdatere siden.
+Brukernavnvalidering: Applikasjonen validerer brukernavnene og gir feilmeldinger hvis de ikke oppfyller kravene.
+Meldingsbegrensning: Forhindrer at samme melding blir sendt flere ganger på kort tid fra samme bruker.
+Teknologier brukt
+Flask: En Python-webapplikasjonsrammeverk brukt for å bygge den serverdelen av applikasjonen.
+SocketIO: Et Python-bibliotek for å muliggjøre toveis sanntidskommunikasjon mellom klienten og serveren.
+HTML/CSS/JavaScript: Frontend-teknologier brukt til å designe og gjøre applikasjonen interaktiv.
+Bidrag
+Bidrag er velkomne! Hvis du vil bidra til prosjektet, kan du åpne en pull-forespørsel med de foreslåtte endringene.
+
+Lisens
+Dette prosjektet er lisensiert under MIT-lisensen. Se LICENSE for mer informasjon.
+
