@@ -3,13 +3,17 @@
 <head>
     <title>Flask Chat App</title>
     <style>
+        /* CSS-styling for nettsiden */
+        /* Generelle stiler for kroppen */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f5f5f5;
+            transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Container for å sentrere innholdet på siden */
         .container {
             display: flex;
             flex-direction: column;
@@ -18,11 +22,13 @@
             height: 100vh;
         }
 
+        /* Stiler for chat-headeren */
         .chat-header {
             font-size: 30px;
             margin-bottom: 20px;
         }
 
+        /* Container for meldinger med scroll hvis mange meldinger */
         .message-container {
             width: 90%;
             min-height: 200px;
@@ -33,8 +39,10 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 10px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Stiler for individuelle meldinger */
         .message {
             display: flex;
             align-items: center;
@@ -44,14 +52,17 @@
             background-color: #f0f0f0;
             word-wrap: break-word;
             border: 1px solid #ccc;
+            transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Stil for brukernavn i meldinger */
         .message b {
             margin-right: 10px;
             padding: 5px 10px;
             border-radius: 5px;
         }
 
+        /* Input-boksen for å sende meldinger */
         .input-box {
             width: 90%;
             padding: 10px;
@@ -61,8 +72,10 @@
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Stiler for tekstinput og tekstområde */
         .input-box input,
         .input-box textarea {
             width: 100%;
@@ -72,23 +85,27 @@
             border-radius: 5px;
             outline: none;
             background-color: #fff;
+            transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Stil for brukernavn-input */
         .input-box input.username {
             width: auto;
             align-self: flex-start;
             margin-bottom: 10px;
         }
 
+        /* Stil for tekstområde for melding */
         .input-box textarea.message {
             flex-grow: 1;
         }
 
+        /* Stil for send-knapp */
         .input-box input[type="submit"] {
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, color 0.3s;
             border: none;
             border-radius: 5px;
             padding: 10px 20px;
@@ -97,23 +114,28 @@
             align-self: flex-end;
         }
 
+        /* Hover-effekt for send-knappen */
         .input-box input[type="submit"]:hover {
             background-color: #0056b3;
         }
 
+        /* Stil for feilmelding */
         #error_message {
             color: red;
         }
 
+        /* Fokus-stil for brukernavn-input */
         .username:focus {
             border-color: #007bff;
         }
 
+        /* Stil for brukernavn med spesialeffekt */
         .username.neo {
             box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.5);
             animation: glowing 1500ms infinite alternate;
         }
 
+        /* Animasjon for spesialeffekt på brukernavn */
         @keyframes glowing {
             0% {
                 background-color: #ff0000;
@@ -126,6 +148,7 @@
             }
         }
 
+        /* Stil for en fast knapp for å skrolle til bunn */
         .fixed-button {
             position: fixed;
             right: 20px;
@@ -140,8 +163,50 @@
             cursor: pointer;
         }
 
+        /* Hover-effekt for fast knapp */
         .fixed-button:hover {
             background-color: #0056b3;
+        }
+
+        /* Mørkemodus stiler */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .message-container.dark-mode {
+            background-color: #1e1e1e;
+            color: #444444;
+        }
+
+        .message.dark-mode {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border-color: #444444;
+        }
+
+        .input-box.dark-mode {
+            background-color: #1e1e1e;
+            color: #444444;
+        }
+
+        .input-box input.dark-mode,
+        .input-box textarea.dark-mode {
+            background-color: #2c2c2c;
+            color: #444444;
+            border-color: #444444;
+        }
+
+        .input-box input[type="submit"].dark-mode {
+            background-color: #0056b3;
+        }
+
+        .fixed-button.dark-mode {
+            background-color: #0056b3;
+        }
+
+        .fixed-button.dark-mode:hover {
+            background-color: #003d80;
         }
     </style>
 </head>
@@ -150,126 +215,177 @@
     <div class="container">
         <h1 class="chat-header">Chat</h1>
         <div class="message-container">
-            <div class="no-messages">No messages</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="input-box">
-            <form action="#" method="POST" id="message_form">
-                <input type="text" class="username" placeholder="User Name" />
-                <textarea class="message" placeholder="Message"></textarea>
-                <input type="submit" value="Send" />
-            </form>
-        </div>
-
-        <div id="error_message"></div>
-
-        <div class="fixed-button" id="scrollToBottomButton">
-            To newest message
-        </div>
+            <div class="
+        no-messages">No messages</div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
-    <script type="text/javascript">
-        var socket = io.connect('http://' + document.domain + ':5000');
+    <div class="divider"></div>
 
-        var usernameColors = {};
+    <div class="input-box">
+        <form action="#" method="POST" id="message_form">
+            <input type="text" class="username" placeholder="User Name" />
+            <textarea class="message" placeholder="Message"></textarea>
+            <input type="submit" value="Send" />
+        </form>
+    </div>
 
-        $(document).ready(function () {
-            $('form#message_form').submit(function (event) {
-                event.preventDefault();
-                let user_name = $('input.username').val();
-                let user_input = $('textarea.message').val();
+    <div id="error_message"></div>
 
-                if (user_input.length < 1) {
-                    $('#error_message').text('No message found.');
-                    setTimeout(function () {
-                        $('#error_message').text('');
-                    }, 4000);
-                    return;
-                }
+    <div class="fixed-button" id="scrollToBottomButton">
+        To newest message
+    </div>
 
-                if (user_name.length > 12) {
-                    $('#error_message').text('Username must be shorter than 12 characters.');
-                    setTimeout(function () {
-                        $('#error_message').text('');
-                    }, 4000);
-                    return;
-                }
+    <div class="fixed-button" id="toggleDarkModeButton" style="bottom: 60px;">
+        Toggle Dark Mode
+    </div>
+</div>
 
-                socket.emit('my event', { user_name: user_name, message: user_input });
-                $('textarea.message').val('').focus();
-            });
+<!-- Laster inn jQuery og Socket.IO -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+<script type="text/javascript">
+    // Initialiserer Socket.IO
+    var socket = io.connect('http://' + document.domain + ':5000');
 
-            socket.on('my response', function (msg) {
-                if (typeof msg.user_name !== 'undefined') {
-                    var username = msg.user_name;
-                    var message = msg.message;
+    // Lagrer farger for brukernavn
+    var usernameColors = {};
 
-                    if (!usernameColors[username]) {
-                        usernameColors[username] = getRandomLightColor();
-                    }
+    $(document).ready(function () {
+        // Function to update message colors based on mode
+        function updateMessageColors(mode) {
+            if (mode === 'dark') {
+                $('.message-container .message').addClass('dark-mode');
+            } else {
+                $('.message-container .message').removeClass('dark-mode');
+            }
+        }
 
-                    var usernameElement = $('<b>').addClass('username').addClass('neo').text(username);
-                    usernameElement.css('background-color', usernameColors[username]);
+        // Håndterer skjema for å sende meldinger
+        $('form#message_form').submit(function (event) {
+            event.preventDefault();
+            let user_name = $('input.username').val();
+            let user_input = $('textarea.message').val();
 
-                    var messageContainer = $('<div>').addClass('message').append(usernameElement);
-                    var words = message.split(' ');
-
-                    var line = '';
-                    var containerWidth = $('.message-container').width();
-                    for (var i = 0; i < words.length; i++) {
-                        var testLine = line + words[i] + ' ';
-                        var testWidth = $('<span>').addClass('message-text').text(testLine).width();
-                        if (testWidth > containerWidth) {
-                            var messageElement = $('<span>').addClass('message-text').text(line);
-                            messageContainer.append(messageElement);
-                            line = words[i] + ' ';
-                        } else {
-                            line = testLine;
-                        }
-                    }
-
-                    var messageElement = $('<span>').addClass('message-text').text(line);
-                    messageContainer.append(messageElement);
-                    $('.message-container').append(messageContainer);
-
-                    $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
-                    $('.no-messages').hide();
-                }
-            });
-
-            socket.on('short message', function (data) {
-                $('#error_message').text(data.error);
+            // Validering av meldingens innhold
+            if (user_input.length < 1) {
+                $('#error_message').text('No message found.');
                 setTimeout(function () {
                     $('#error_message').text('');
                 }, 4000);
-            });
+                return;
+            }
 
-            socket.on('validation error', function (data) {
-                $('#error_message').text(data.error);
+            // Validering av brukernavnets lengde
+            if (user_name.length > 12) {
+                $('#error_message').text('Username must be shorter than 12 characters.');
                 setTimeout(function () {
                     $('#error_message').text('');
                 }, 4000);
-            });
-
-            function getRandomLightColor() {
-                var color = 'hsl(' + (Math.random() * 360) + ', 100%, 75%)';
-                return color;
+                return;
             }
 
-            function scrollToBottom() {
-                $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
-            }
-
-            scrollToBottom();
-
-            $('#scrollToBottomButton').click(function () {
-                scrollToBottom();
-            });
+            // Sender melding til serveren
+            socket.emit('my event', { user_name: user_name, message: user_input });
+            $('textarea.message').val('').focus();
         });
-    </script>
+
+        // Mottar og viser meldinger fra serveren
+        socket.on('my response', function (msg) {
+            if (typeof msg.user_name !== 'undefined') {
+                var username = msg.user_name;
+                var message = msg.message;
+
+                // Tildeler en tilfeldig farge til nye brukernavn
+                if (!usernameColors[username]) {
+                    usernameColors[username] = getRandomLightColor();
+                }
+
+                // Oppretter og viser meldingselementer
+                var usernameElement = $('<b>').addClass('username').addClass('neo').text(username);
+                usernameElement.css('background-color', usernameColors[username]);
+
+                var messageContainer = $('<div>').addClass('message').append(usernameElement);
+                var words = message.split(' ');
+
+                var line = '';
+                var containerWidth = $('.message-container').width();
+                for (var i = 0; i < words.length; i++) {
+                    var testLine = line + words[i] + ' ';
+                    var testWidth = $('<span>').addClass('message-text').text(testLine).width();
+                    if (testWidth > containerWidth) {
+                        var messageElement = $('<span>').addClass('message-text').text(line);
+                        messageContainer.append(messageElement);
+                        line = words[i] + ' ';
+                    } else {
+                        line = testLine;
+                    }
+                }
+
+                var messageElement = $('<span>').addClass('message-text').text(line);
+                messageContainer.append(messageElement);
+                $('.message-container').append(messageContainer);
+
+                // Skroller til bunn av meldingscontaineren
+                $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
+                $('.no-messages').hide();
+
+                // Oppdaterer fargene til eksisterende meldinger hvis det er endret modus
+                var currentMode = $('body').hasClass('dark-mode') ? 'dark' : 'light';
+                updateMessageColors(currentMode);
+            }
+        });
+
+        // Håndterer feil for korte meldinger
+        socket.on('short message', function (data) {
+            $('#error_message').text(data.error);
+            setTimeout(function () {
+                $('#error_message').text('');
+            }, 4000);
+        });
+
+        // Håndterer valideringsfeil
+        socket.on('validation error', function (data) {
+            $('#error_message').text(data.error);
+            setTimeout(function () {
+                $('#error_message').text('');
+            }, 4000);
+        });
+
+        // Genererer en tilfeldig lys farge
+        function getRandomLightColor() {
+            var color = 'hsl(' + (Math.random() * 360) + ', 100%, 75%)';
+            return color;
+        }
+
+        // Skroller til bunn av meldingscontaineren
+        function scrollToBottom() {
+            $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
+        }
+
+        // Initial skrolling til bunn
+        scrollToBottom();
+
+        // Klikk-hendelse for fast knapp for å skrolle til bunn
+        $('#scrollToBottomButton').click(function () {
+            scrollToBottom();
+        });
+
+        // Håndterer aktivering/deaktivering av mørkemodus
+        $('#toggleDarkModeButton').click(function () {
+            $('body').toggleClass('dark-mode');
+            $('.message-container').toggleClass('dark-mode');
+            $('.message').toggleClass('dark-mode');
+            $('.input-box').toggleClass('dark-mode');
+            $('.input-box input').toggleClass('dark-mode');
+            $('.input-box textarea').toggleClass('dark-mode');
+            $('.input-box input[type="submit"]').toggleClass('dark-mode');
+            $('.fixed-button').toggleClass('dark-mode');
+
+            // Oppdaterer fargene til eksisterende meldinger basert på modus
+            var currentMode = $('body').hasClass('dark-mode') ? 'dark' : 'light';
+            updateMessageColors(currentMode);
+        });
+    });
+</script>
 </body>
 </html>
