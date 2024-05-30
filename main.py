@@ -7,13 +7,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 socketio = SocketIO(app)
 
-# Ordbok for å lagre meldingskø for hver bruker
+# log for å lagre meldingskø for hver bruker
 message_queues = defaultdict(deque)
-# Ordbok for å lagre tidspunktet for siste melding for hver bruker
+# log for å lagre tidspunktet for siste melding for hver bruker
 last_message_timestamps = defaultdict(int)
-# Ordbok for å lagre antall meldinger for hver bruker
+# log for å lagre antall meldinger for hver bruker
 message_count = defaultdict(int)
-# Ordbok for å lagre nedkjølingstimer for hver bruker
+# log for å lagre nedkjølingstimer for hver bruker
 cooldown_timers = defaultdict(int)
 
 
